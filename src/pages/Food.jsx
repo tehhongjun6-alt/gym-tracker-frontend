@@ -64,6 +64,10 @@ export default function Food({ token }) {
         };
     }, [selectedItem]);
 
+    useEffect(() => {
+        runMealSearch(MEAL_CATEGORIES[0].query);
+    }, [token]);
+
     function handleImageError(event) {
         event.currentTarget.style.display = "none";
         const card = event.currentTarget.closest(".food-result-card");
@@ -120,7 +124,22 @@ export default function Food({ token }) {
                 { token }
             );
 
-            setMeals(data);
+            const shuffledMeals = [...data];
+
+            for (
+                let index = shuffledMeals.length - 1;
+                index > 0;
+                index--
+            ) {
+                const randomIndex = Math.floor(
+                    Math.random() * (index + 1)
+                );
+
+                [shuffledMeals[index], shuffledMeals[randomIndex]] =
+                    [shuffledMeals[randomIndex], shuffledMeals[index]];
+            }
+
+            setMeals(shuffledMeals);
         } catch (error) {
             setMeals([]);
             setMealError(error.message);

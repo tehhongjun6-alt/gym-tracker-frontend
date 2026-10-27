@@ -46,9 +46,9 @@ export default function Layout({ onLogout }) {
         }, 0);
     }
 
-    function handleLogout() {
-        onLogout();
-        navigate("/login");
+    async function handleLogout() {
+        await onLogout();
+        navigate("/login", { replace: true });
     }
 
     return (

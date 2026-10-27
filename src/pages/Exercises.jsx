@@ -126,34 +126,18 @@ export default function Exercises({ token }) {
         };
     }, [selectedExercise]);
 
-    async function handleSearch(event) {
-        event.preventDefault();
-        const filters = [];
+    useEffect(() => {
+        const randomMuscle =
+            muscleOptions[
+                Math.floor(Math.random() * muscleOptions.length)
+            ];
 
-        if (name.trim()) {
-            filters.push("name=" + encodeURIComponent(name.trim()));
-        }
-        if (muscle) {
-            filters.push("muscle=" + encodeURIComponent(muscle));
-        }
-        if (type) {
-            filters.push("type=" + encodeURIComponent(type));
-        }
-        if (difficulty) {
-            filters.push(
-                "difficulty=" + encodeURIComponent(difficulty)
-            );
-        }
+        runExerciseSearch(
+            "muscle=" + encodeURIComponent(randomMuscle)
+        );
+    }, [token]);
 
-        if (filters.length === 0) {
-            setExerciseError(
-                "Please enter or select at least one search condition."
-            );
-            setImageError("");
-            return;
-        }
-
-        const query = filters.join("&");
+    async function runExerciseSearch(query) {
         setLoading(true);
         setHasSearched(true);
         setExercises([]);
@@ -184,17 +168,53 @@ export default function Exercises({ token }) {
         setLoading(false);
     }
 
+    async function handleSearch(event) {
+        event.preventDefault();
+        const filters = [];
+
+        if (name.trim()) {
+            filters.push("name=" + encodeURIComponent(name.trim()));
+        }
+        if (muscle) {
+            filters.push("muscle=" + encodeURIComponent(muscle));
+        }
+        if (type) {
+            filters.push("type=" + encodeURIComponent(type));
+        }
+        if (difficulty) {
+            filters.push(
+                "difficulty=" + encodeURIComponent(difficulty)
+            );
+        }
+
+        if (filters.length === 0) {
+            setExerciseError(
+                "Please enter or select at least one search condition."
+            );
+            setImageError("");
+            return;
+        }
+
+        await runExerciseSearch(filters.join("&"));
+    }
+
     function handleClear() {
         setName("");
         setMuscle("");
         setType("");
         setDifficulty("");
-        setExercises([]);
-        setExerciseImages([]);
-        setHasSearched(false);
         setExerciseError("");
         setImageError("");
         setSelectedExercise(null);
+
+        const randomMuscle =
+            muscleOptions[
+                Math.floor(Math.random() * muscleOptions.length)
+            ];
+
+        runExerciseSearch(
+            "muscle=" + encodeURIComponent(randomMuscle)
+        );
     }
 
     const imageExerciseNames = new Set(
@@ -393,6 +413,9 @@ export default function Exercises({ token }) {
                                     }}
                                 >
                                     <div className="exercise-card-media">
+                                        <div className="exercise-name-placeholder">
+                                            {exercise.name}
+                                        </div>
                                         {exercise.images[0] ? (
                                             <img
                                                 src={exercise.images[0]}
@@ -400,13 +423,12 @@ export default function Exercises({ token }) {
                                                     exercise.name +
                                                     " demonstration"
                                                 }
+                                                onError={(event) => {
+                                                    event.currentTarget.style.display =
+                                                        "none";
+                                                }}
                                             />
-                                        ) : (
-                                            <div className="exercise-image-placeholder">
-                                                <FiImage aria-hidden="true" />
-                                                <span>Movement guide</span>
-                                            </div>
-                                        )}
+                                        ) : null}
                                         <span
                                             className={
                                                 "exercise-level is-" +

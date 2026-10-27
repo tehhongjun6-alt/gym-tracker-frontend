@@ -190,10 +190,27 @@
 .exercise-card:focus-visible { box-shadow: 0 0 0 3px rgba(119, 120, 255, .2), 0 18px 42px rgba(0, 0, 0, .24); }
 
 .exercise-card-media { position: relative; aspect-ratio: 16 / 11; overflow: hidden; background: #20262d; }
-.exercise-card-media img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform 350ms ease; }
+.exercise-name-placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    padding: 48px 34px;
+    place-items: center;
+    color: #f4f6f8;
+    background:
+        radial-gradient(circle at 18% 20%, rgba(119, 120, 255, .18), transparent 38%),
+        #20262d;
+    font-size: clamp(28px, 3vw, 48px);
+    font-weight: 800;
+    line-height: .95;
+    letter-spacing: -.055em;
+    text-align: center;
+}
+.exercise-card-media img { position: relative; z-index: 1; width: 100%; height: 100%; display: block; object-fit: cover; transition: transform 350ms ease; }
 .exercise-card:hover .exercise-card-media img { transform: scale(1.035); }
 .exercise-level {
     position: absolute;
+    z-index: 2;
     top: 13px;
     right: 13px;
     padding: 5px 8px;

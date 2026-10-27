@@ -12,7 +12,6 @@ export async function apiFetch(path, options = {}) {
         "Content-Type": "application/json",
     };
 
-    // 有登录 token 时才添加 Authorization
     if (token) {
         headers.Authorization = `Bearer ${token}`;
     }

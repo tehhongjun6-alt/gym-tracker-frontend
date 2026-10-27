@@ -2,7 +2,7 @@ import "@fontsource/manrope/500.css";
 import "@fontsource/manrope/700.css";
 import "@fontsource/manrope/800.css";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import gsap from "gsap";
@@ -15,6 +15,7 @@ import trackPhoto from "../assets/weset-track.png";
 import learnPhoto from "../assets/weset-learn.png";
 import sharePhoto from "../assets/weset-share.png";
 import "./Login.css";
+import { supabaseAuth } from "../supabaseAuth";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -219,6 +220,46 @@ export default function Login({ onLogin }) {
             scope: stageRef,
         }
     );
+    useEffect(() => {
+        let handled = false;
+
+        async function finishGoogleLogin(session) {
+            if (handled || !session?.access_token) {
+                return;
+            }
+
+            handled = true;
+
+            try {
+                await apiFetch("/auth/google-profile", {
+                    method: "POST",
+                    token: session.access_token,
+                });
+
+                onLogin(session.access_token);
+                navigate("/feed");
+            } catch (error) {
+                handled = false;
+                setError(error.message);
+            }
+        }
+
+        supabaseAuth.auth.getSession().then(({ data }) => {
+            finishGoogleLogin(data.session);
+        });
+
+        const {
+            data: { subscription },
+        } = supabaseAuth.auth.onAuthStateChange(
+            (_event, session) => {
+                finishGoogleLogin(session);
+            }
+        );
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, [navigate, onLogin]);
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -258,124 +299,149 @@ export default function Login({ onLogin }) {
             block: "start",
         });
     }
+    async function handleGoogleLogin() {
+        setError("");
+        setLoading(true);
+
+        try {
+            const { error } =
+                await supabaseAuth.auth.signInWithOAuth({
+                    provider: "google",
+                    options: {
+                        redirectTo:
+                            `${window.location.origin}/login`,
+                    },
+                });
+
+            if (error) {
+                throw error;
+            }
+        } catch (error) {
+            setError(error.message);
+            setLoading(false);
+        }
+    }
 
     return (
         <main className="login-experience">
             <section className="login-page" ref={stageRef}>
                 <section className="login-brand" aria-label="WESET brand">
-                <img
-                    className="login-watermark"
-                    src={wesetLogo}
-                    alt=""
-                    aria-hidden="true"
-                />
-
-                <div className="brand-lockup" ref={lockupRef}>
                     <img
-                        className="brand-mark"
+                        className="login-watermark"
                         src={wesetLogo}
-                        alt="WESET social connection logo"
+                        alt=""
+                        aria-hidden="true"
                     />
 
-                    <div className="brand-copy">
-                        <p className="brand-name">WESET</p>
-                        <p className="brand-tagline">
-                            Train. Share. Together.
-                        </p>
-                    </div>
-                </div>
+                    <div className="brand-lockup" ref={lockupRef}>
+                        <img
+                            className="brand-mark"
+                            src={wesetLogo}
+                            alt="WESET social connection logo"
+                        />
 
-                <p className="scroll-note" aria-hidden="true">
-                    <span /> Scroll to reveal
-                </p>
+                        <div className="brand-copy">
+                            <p className="brand-name">WESET</p>
+                            <p className="brand-tagline">
+                                Train. Share. Together.
+                            </p>
+                        </div>
+                    </div>
+
+                    <p className="scroll-note" aria-hidden="true">
+                        <span /> Scroll to reveal
+                    </p>
                 </section>
 
                 <section className="login-panel" ref={panelRef}>
-                <div className="login-panel-topline">
-                    <span>New to WESET?</span>
-                    <Link to="/signup">Create account</Link>
-                </div>
-
-                <div className="login-card">
-                    <p className="login-eyebrow">WELCOME BACK</p>
-                    <h1>Welcome back</h1>
-                    <p className="login-intro">
-                        Your progress, your people, all in one place.
-                    </p>
-
-                    <button
-                        className="google-button"
-                        type="button"
-                        disabled
-                        title="Google sign-in is coming soon"
-                    >
-                        <FcGoogle aria-hidden="true" />
-                        <span>Continue with Google</span>
-                        <small>Coming soon</small>
-                    </button>
-
-                    <div className="login-divider" aria-hidden="true">
-                        <span>or continue with email</span>
+                    <div className="login-panel-topline">
+                        <span>New to WESET?</span>
+                        <Link to="/signup">Create account</Link>
                     </div>
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="login-field">
-                            <label htmlFor="email">Email address</label>
-                            <input
-                                id="email"
-                                type="email"
-                                value={email}
-                                onChange={(event) =>
-                                    setEmail(event.target.value)
-                                }
-                                placeholder="you@example.com"
-                                autoComplete="email"
-                                required
-                            />
-                        </div>
-
-                        <div className="login-field">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(event) =>
-                                    setPassword(event.target.value)
-                                }
-                                placeholder="Enter your password"
-                                autoComplete="current-password"
-                                required
-                            />
-                        </div>
-
-                        {error && (
-                            <p className="login-error" role="alert">
-                                {error}
-                            </p>
-                        )}
-
+                    <div className="login-card">
+                        <p className="login-eyebrow">WELCOME BACK</p>
+                        <h1>Welcome back</h1>
+                        <p className="login-intro">
+                            Your progress, your people, all in one place.
+                        </p>
                         <button
-                            className="login-submit"
-                            type="submit"
+                            className="google-button"
+                            type="button"
+                            onClick={handleGoogleLogin}
                             disabled={loading}
                         >
+                            <FcGoogle aria-hidden="true" />
+
                             <span>
-                                {loading ? "Logging in..." : "Login"}
+                                {loading
+                                    ? "Connecting..."
+                                    : "Continue with Google"}
                             </span>
-                            {!loading && <span aria-hidden="true">→</span>}
                         </button>
-                    </form>
 
-                    <p className="login-mobile-signup">
-                        Do not have an account?{" "}
-                        <Link to="/signup">Sign up</Link>
+                        <div className="login-divider" aria-hidden="true">
+                            <span>or continue with email</span>
+                        </div>
+
+                        <form onSubmit={handleSubmit}>
+                            <div className="login-field">
+                                <label htmlFor="email">Email address</label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(event) =>
+                                        setEmail(event.target.value)
+                                    }
+                                    placeholder="you@example.com"
+                                    autoComplete="email"
+                                    required
+                                />
+                            </div>
+
+                            <div className="login-field">
+                                <label htmlFor="password">Password</label>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    value={password}
+                                    onChange={(event) =>
+                                        setPassword(event.target.value)
+                                    }
+                                    placeholder="Enter your password"
+                                    autoComplete="current-password"
+                                    required
+                                />
+                            </div>
+
+                            {error && (
+                                <p className="login-error" role="alert">
+                                    {error}
+                                </p>
+                            )}
+
+                            <button
+                                className="login-submit"
+                                type="submit"
+                                disabled={loading}
+                            >
+                                <span>
+                                    {loading ? "Logging in..." : "Login"}
+                                </span>
+                                {!loading && <span aria-hidden="true">→</span>}
+                            </button>
+                        </form>
+
+                        <p className="login-mobile-signup">
+                            Do not have an account?{" "}
+                            <Link to="/signup">Sign up</Link>
+                        </p>
+                    </div>
+
+                    <p className="login-footer">
+                        By continuing, you agree to use WESET responsibly.
                     </p>
-                </div>
-
-                <p className="login-footer">
-                    By continuing, you agree to use WESET responsibly.
-                </p>
                 </section>
             </section>
 

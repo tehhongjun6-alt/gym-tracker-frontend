@@ -17,6 +17,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Signup from "./pages/Signup";
 import Workouts from "./pages/Workouts";
+import { supabaseAuth } from "./supabaseAuth";
 
 export default function App() {
     const [token, setToken] = useState(
@@ -32,9 +33,13 @@ export default function App() {
         setToken(accessToken);
     }
 
-    function handleLogout() {
-        localStorage.removeItem("access_token");
-        setToken("");
+    async function handleLogout() {
+        try {
+            await supabaseAuth.auth.signOut();
+        } finally {
+            localStorage.removeItem("access_token");
+            setToken("");
+        }
     }
 
     return (

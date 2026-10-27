@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320">
+  <title>WESET</title>
+  <rect width="320" height="320" rx="82" fill="#111111"/>
+  <circle cx="76" cy="82" r="18" fill="#7778FF"/>
+  <circle cx="244" cy="82" r="18" fill="#B7F34A"/>
+  <path d="M66 118 L103 220 Q113 246 132 218 L160 157" fill="none" stroke="#7778FF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M160 157 L188 218 Q207 246 217 220 L254 118" fill="none" stroke="#B7F34A" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="160" cy="157" r="14" fill="#FFFFFF"/>
+</svg>
