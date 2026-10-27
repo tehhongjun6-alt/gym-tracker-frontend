@@ -1,0 +1,234 @@
+.create-modal-backdrop {
+    position: fixed;
+    z-index: 100;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(2, 4, 7, 0.78);
+    backdrop-filter: blur(16px);
+}
+
+.create-modal {
+    width: min(100%, 540px);
+    max-height: calc(100svh - 48px);
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 26px;
+    color: var(--app-text);
+    background:
+        radial-gradient(circle at 90% 0%, rgba(119, 120, 255, 0.18), transparent 34%),
+        var(--app-surface);
+    box-shadow: 0 32px 100px rgba(0, 0, 0, 0.52);
+}
+
+.create-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 25px 26px 20px;
+    border-bottom: 1px solid var(--app-line);
+}
+
+.create-modal-header p {
+    color: var(--app-purple);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+}
+
+.create-modal-header h2 {
+    margin: 4px 0 0;
+    color: var(--app-text);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.create-modal-close {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    color: var(--app-text);
+    background: rgba(255, 255, 255, 0.07);
+    cursor: pointer;
+}
+
+.create-modal-close svg {
+    width: 20px;
+    height: 20px;
+}
+
+.create-modal form {
+    display: grid;
+    gap: 18px;
+    padding: 24px 26px 26px;
+}
+
+.create-field {
+    display: grid;
+    gap: 8px;
+}
+
+.create-field > span {
+    color: #dce1e7;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.create-field textarea,
+.create-field select {
+    width: 100%;
+    border: 1px solid var(--app-line);
+    border-radius: 14px;
+    outline: 0;
+    color: var(--app-text);
+    background: #0d1217;
+    font: inherit;
+}
+
+.create-field textarea {
+    min-height: 130px;
+    resize: vertical;
+    padding: 14px 15px;
+    line-height: 1.5;
+}
+
+.create-field select {
+    height: 46px;
+    padding: 0 13px;
+}
+
+.create-field textarea:focus,
+.create-field select:focus {
+    border-color: var(--app-purple);
+    box-shadow: 0 0 0 3px rgba(119, 120, 255, 0.14);
+}
+
+.create-field > small {
+    justify-self: end;
+    color: var(--app-muted);
+    font-size: 10px;
+}
+
+.create-photo-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.create-photo-field:hover {
+    border-color: var(--app-purple);
+    background: rgba(119, 120, 255, 0.07);
+}
+
+.create-photo-field > svg {
+    width: 24px;
+    height: 24px;
+    color: var(--app-lime);
+}
+
+.create-photo-field > span {
+    display: grid;
+    gap: 2px;
+}
+
+.create-photo-field strong {
+    color: var(--app-text);
+    font-size: 13px;
+}
+
+.create-photo-field small,
+.create-selected-photo {
+    color: var(--app-muted);
+    font-size: 11px;
+}
+
+.create-photo-field input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.create-modal-error {
+    padding: 11px 13px;
+    border: 1px solid rgba(255, 107, 107, 0.22);
+    border-radius: 12px;
+    color: #ffb4b4;
+    background: rgba(255, 107, 107, 0.08);
+    font-size: 12px;
+}
+
+.create-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.create-modal-actions button {
+    min-height: 44px;
+    padding: 0 17px;
+    border: 0;
+    border-radius: 13px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.create-cancel {
+    color: var(--app-text);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.create-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #0b0f13;
+    background: var(--app-lime);
+}
+
+.create-submit svg {
+    width: 16px;
+    height: 16px;
+}
+
+.create-modal-actions button:disabled,
+.create-modal-close:disabled {
+    cursor: wait;
+    opacity: 0.58;
+}
+
+@media (max-width: 600px) {
+    .create-modal-backdrop {
+        align-items: end;
+        padding: 0;
+    }
+
+    .create-modal {
+        width: 100%;
+        max-height: 92svh;
+        border-right: 0;
+        border-bottom: 0;
+        border-left: 0;
+        border-radius: 24px 24px 0 0;
+    }
+
+    .create-modal-header,
+    .create-modal form {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+}

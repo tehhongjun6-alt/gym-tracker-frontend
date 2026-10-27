@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import Exercises from "./pages/Exercises";
 import Feed from "./pages/Feed";
+import Food from "./pages/Food";
 import Friends from "./pages/Friends";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
@@ -102,6 +103,11 @@ export default function App() {
                         <Route
                             path="/exercises"
                             element={<Exercises token={token} />}
+                        />
+
+                        <Route
+                            path="/food"
+                            element={<Food token={token} />}
                         />
 
                         <Route

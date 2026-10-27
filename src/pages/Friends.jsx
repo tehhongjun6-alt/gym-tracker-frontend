@@ -1,23 +1,25 @@
-import {
-    useEffect,
-    useState,
-} from "react";
+import { useEffect, useState } from "react";
+import { FiSearch, FiUsers } from "react-icons/fi";
 
 import { apiFetch } from "../api";
+import PageHeader from "../components/PageHeader";
+import "./Friends.css";
 
+function getInitial(username = "") {
+    return username.trim().charAt(0).toUpperCase() || "?";
+}
 export default function Friends({ token }) {
+    const [activeTab, setActiveTab] = useState("find");
     const [users, setUsers] = useState([]);
-    const [friendRequests, setFriendRequests] =
-        useState([]);
+    const [friendRequests, setFriendRequests] = useState([]);
     const [friends, setFriends] = useState([]);
+    const [acceptedRequestIds, setAcceptedRequestIds] =
+        useState(new Set());
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
-    const [searching, setSearching] =
-        useState(false);
-    const [sendingId, setSendingId] =
-        useState(null);
-    const [acceptingId, setAcceptingId] =
-        useState(null);
+    const [searching, setSearching] = useState(false);
+    const [sendingId, setSendingId] = useState(null);
+    const [acceptingId, setAcceptingId] = useState(null);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
@@ -25,32 +27,24 @@ export default function Friends({ token }) {
         let path = "/users";
 
         if (searchValue.trim()) {
-            path = `/users?search=${searchValue.trim()}`;
+            path =
+                "/users?search=" +
+                encodeURIComponent(searchValue.trim());
         }
 
-        const data = await apiFetch(path, {
-            token,
-        });
-
+        const data = await apiFetch(path, { token });
         setUsers(data);
     }
 
     async function loadFriendRequests() {
-        const data = await apiFetch(
-            "/friend-requests",
-            {
-                token,
-            }
-        );
-
+        const data = await apiFetch("/friend-requests", {
+            token,
+        });
         setFriendRequests(data);
     }
 
     async function loadFriends() {
-        const data = await apiFetch("/friends", {
-            token,
-        });
-
+        const data = await apiFetch("/friends", { token });
         setFriends(data);
     }
 
@@ -59,11 +53,13 @@ export default function Friends({ token }) {
         setError("");
 
         try {
-            await loadUsers();
-            await loadFriendRequests();
-            await loadFriends();
-        } catch (error) {
-            setError(error.message);
+            await Promise.all([
+                loadUsers(),
+                loadFriendRequests(),
+                loadFriends(),
+            ]);
+        } catch (requestError) {
+            setError(requestError.message);
         } finally {
             setLoading(false);
         }
@@ -75,15 +71,14 @@ export default function Friends({ token }) {
 
     async function handleSearch(event) {
         event.preventDefault();
-
         setSearching(true);
         setMessage("");
         setError("");
 
         try {
             await loadUsers(search);
-        } catch (error) {
-            setError(error.message);
+        } catch (requestError) {
+            setError(requestError.message);
         } finally {
             setSearching(false);
         }
@@ -97,19 +92,24 @@ export default function Friends({ token }) {
         try {
             await apiFetch("/friend-requests", {
                 method: "POST",
-                body: {
-                    receiver_id: receiverId,
-                },
+                body: { receiver_id: receiverId },
                 token,
             });
 
-            setMessage(
-                "Friend request sent successfully"
+            setUsers((currentUsers) =>
+                currentUsers.map((user) =>
+                    user.id === receiverId
+                        ? {
+                              ...user,
+                              friendship_status:
+                                  "request-sent",
+                          }
+                        : user
+                )
             );
-
-            await loadUsers(search);
-        } catch (error) {
-            setError(error.message);
+            setMessage("Friend request sent.");
+        } catch (requestError) {
+            setError(requestError.message);
         } finally {
             setSendingId(null);
         }
@@ -122,209 +122,340 @@ export default function Friends({ token }) {
 
         try {
             await apiFetch(
-                `/friend-requests/${requestId}/accept`,
+                "/friend-requests/" +
+                    requestId +
+                    "/accept",
                 {
                     method: "PATCH",
                     token,
                 }
             );
 
-            setMessage(
-                "Friend request accepted successfully"
-            );
+            setAcceptedRequestIds((currentIds) => {
+                const nextIds = new Set(currentIds);
+                nextIds.add(requestId);
+                return nextIds;
+            });
 
-            await loadUsers(search);
-            await loadFriendRequests();
-            await loadFriends();
-        } catch (error) {
-            setError(error.message);
+            await Promise.all([
+                loadUsers(search),
+                loadFriends(),
+            ]);
+            setMessage("Friend request accepted.");
+        } catch (requestError) {
+            setError(requestError.message);
         } finally {
             setAcceptingId(null);
         }
     }
 
+    function getUserButton(user) {
+        if (sendingId === user.id) {
+            return {
+                label: "Sending...",
+                disabled: true,
+                className: "is-primary",
+            };
+        }
+
+        if (user.friendship_status === "none") {
+            return {
+                label: "Add Friend",
+                disabled: false,
+                className: "is-primary",
+            };
+        }
+
+        if (user.friendship_status === "request-sent") {
+            return {
+                label: "Requested",
+                disabled: true,
+                className: "is-muted",
+            };
+        }
+
+        if (
+            user.friendship_status === "request-received"
+        ) {
+            return {
+                label: "Request received",
+                disabled: true,
+                className: "is-muted",
+            };
+        }
+
+        return {
+            label: "Friends",
+            disabled: true,
+            className: "is-muted",
+        };
+    }
+
+    const pendingRequestCount = friendRequests.filter(
+        (request) => !acceptedRequestIds.has(request.id)
+    ).length;
+
     return (
-        <section>
-            <h2>Friends</h2>
+        <section className="friends-page">
+            <PageHeader eyebrow="Friends" title="Stronger" accent="Together." />
 
-            {message && <p>{message}</p>}
-            {error && <p>{error}</p>}
+            <nav
+                className="friends-tabs"
+                aria-label="Friend sections"
+            >
+                <button
+                    type="button"
+                    className={
+                        activeTab === "find"
+                            ? "is-active"
+                            : ""
+                    }
+                    onClick={() => setActiveTab("find")}
+                >
+                    Find Users
+                </button>
+                <button
+                    type="button"
+                    className={
+                        activeTab === "requests"
+                            ? "is-active"
+                            : ""
+                    }
+                    onClick={() =>
+                        setActiveTab("requests")
+                    }
+                >
+                    Friend Requests
+                    {pendingRequestCount > 0 && (
+                        <span>{pendingRequestCount}</span>
+                    )}
+                </button>
+                <button
+                    type="button"
+                    className={
+                        activeTab === "friends"
+                            ? "is-active"
+                            : ""
+                    }
+                    onClick={() =>
+                        setActiveTab("friends")
+                    }
+                >
+                    Your Friends
+                </button>
+            </nav>
 
-            {loading && (
-                <p>Loading friend information...</p>
+            {message && (
+                <div className="friends-notice is-success">
+                    {message}
+                </div>
+            )}
+            {error && (
+                <div className="friends-notice is-error">
+                    {error}
+                </div>
             )}
 
-            {!loading && (
-                <div>
-                    <section>
-                        <h3>Find Users</h3>
-
-                        <form onSubmit={handleSearch}>
-                            <label htmlFor="search">
-                                Search Username
-                            </label>
-
-                            <br />
-
-                            <input
-                                id="search"
-                                type="text"
-                                value={search}
-                                onChange={(event) =>
-                                    setSearch(
-                                        event.target.value
-                                    )
-                                }
-                            />
-
-                            <button
-                                type="submit"
-                                disabled={searching}
+            {loading ? (
+                <div className="friends-loading">
+                    Loading friend information...
+                </div>
+            ) : (
+                <div className="friends-panel">
+                    {activeTab === "find" && (
+                        <section>
+                            <form
+                                className="friends-search"
+                                onSubmit={handleSearch}
                             >
-                                {searching
-                                    ? "Searching..."
-                                    : "Search"}
-                            </button>
-                        </form>
+                                <div>
+                                    <FiSearch aria-hidden="true" />
+                                    <input
+                                        id="friend-search"
+                                        type="text"
+                                        value={search}
+                                        onChange={(event) =>
+                                            setSearch(
+                                                event.target
+                                                    .value
+                                            )
+                                        }
+                                        placeholder="Search username"
+                                        aria-label="Search username"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={searching}
+                                >
+                                    {searching
+                                        ? "Searching..."
+                                        : "Search"}
+                                </button>
+                            </form>
 
-                        {users.length === 0 && (
-                            <p>No users found.</p>
-                        )}
+                            {users.length === 0 ? (
+                                <div className="friends-empty">
+                                    <FiUsers aria-hidden="true" />
+                                    <h2>No users found</h2>
+                                    <p>
+                                        Try another username.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="friend-list">
+                                    {users.map((user) => {
+                                        const button =
+                                            getUserButton(
+                                                user
+                                            );
 
-                        {users.length > 0 && (
-                            <ul>
-                                {users.map((user) => (
-                                    <li key={user.id}>
-                                        <p>
-                                            Username:{" "}
-                                            {user.username}
-                                        </p>
-
-                                        {user.friendship_status ===
-                                            "none" && (
+                                        return (
+                                            <article
+                                                className="friend-row"
+                                                key={user.id}
+                                            >
+                                                <div className="friend-avatar">
+                                                    {getInitial(
+                                                        user.username
+                                                    )}
+                                                </div>
+                                                <strong>
+                                                    {user.username}
+                                                </strong>
                                                 <button
                                                     type="button"
+                                                    className={
+                                                        "friend-action " +
+                                                        button.className
+                                                    }
                                                     onClick={() =>
                                                         handleSendRequest(
                                                             user.id
                                                         )
                                                     }
                                                     disabled={
-                                                        sendingId ===
-                                                        user.id
+                                                        button.disabled
                                                     }
                                                 >
-                                                    {sendingId ===
-                                                        user.id
-                                                        ? "Sending..."
-                                                        : "Add Friend"}
+                                                    {button.label}
                                                 </button>
-                                            )}
-
-                                        {user.friendship_status ===
-                                            "request-sent" && (
-                                                <p>
-                                                    Friend request
-                                                    sent
-                                                </p>
-                                            )}
-
-                                        {user.friendship_status ===
-                                            "request-received" && (
-                                                <p>
-                                                    This user sent
-                                                    you a friend
-                                                    request
-                                                </p>
-                                            )}
-
-                                        {user.friendship_status ===
-                                            "friends" && (
-                                                <p>
-                                                    You are friends
-                                                </p>
-                                            )}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </section>
-
-                    <hr />
-
-                    <section>
-                        <h3>Friend Requests</h3>
-
-                        {friendRequests.length ===
-                            0 && (
-                                <p>
-                                    You do not have any pending
-                                    friend requests.
-                                </p>
+                                            </article>
+                                        );
+                                    })}
+                                </div>
                             )}
+                        </section>
+                    )}
 
-                        {friendRequests.length > 0 && (
-                            <ul>
-                                {friendRequests.map(
-                                    (request) => (
-                                        <li
-                                            key={
-                                                request.id
-                                            }
-                                        >
-                                            <p>
-                                                {
-                                                    request.requester_username
-                                                }{" "}
-                                                sent you a
-                                                friend request.
-                                            </p>
+                    {activeTab === "requests" && (
+                        <section>
+                            {friendRequests.length === 0 ? (
+                                <div className="friends-empty">
+                                    <FiUsers aria-hidden="true" />
+                                    <h2>No friend requests</h2>
+                                    <p>
+                                        New requests will
+                                        appear here.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="friend-list">
+                                    {friendRequests.map(
+                                        (request) => {
+                                            const accepted =
+                                                acceptedRequestIds.has(
+                                                    request.id
+                                                );
+                                            const accepting =
+                                                acceptingId ===
+                                                request.id;
 
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    handleAcceptRequest(
+                                            return (
+                                                <article
+                                                    className="friend-row"
+                                                    key={
                                                         request.id
-                                                    )
-                                                }
-                                                disabled={
-                                                    acceptingId ===
-                                                    request.id
-                                                }
-                                            >
-                                                {acceptingId ===
-                                                    request.id
-                                                    ? "Accepting..."
-                                                    : "Accept"}
-                                            </button>
-                                        </li>
-                                    )
-                                )}
-                            </ul>
-                        )}
-                    </section>
+                                                    }
+                                                >
+                                                    <div className="friend-avatar">
+                                                        {getInitial(
+                                                            request.requester_username
+                                                        )}
+                                                    </div>
+                                                    <strong>
+                                                        {
+                                                            request.requester_username
+                                                        }
+                                                    </strong>
+                                                    <button
+                                                        type="button"
+                                                        className={
+                                                            "friend-action " +
+                                                            (accepted
+                                                                ? "is-muted"
+                                                                : "is-primary")
+                                                        }
+                                                        onClick={() =>
+                                                            handleAcceptRequest(
+                                                                request.id
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            accepted ||
+                                                            accepting
+                                                        }
+                                                    >
+                                                        {accepting
+                                                            ? "Confirming..."
+                                                            : accepted
+                                                              ? "Accepted"
+                                                              : "Confirm"}
+                                                    </button>
+                                                </article>
+                                            );
+                                        }
+                                    )}
+                                </div>
+                            )}
+                        </section>
+                    )}
 
-                    <hr />
-
-                    <section>
-                        <h3>Your Friends</h3>
-
-                        {friends.length === 0 && (
-                            <p>
-                                You do not have any friends yet.
-                            </p>
-                        )}
-
-                        {friends.length > 0 && (
-                            <ul>
-                                {friends.map((friend) => (
-                                    <li key={friend.id}>
-                                        {friend.username}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </section>
+                    {activeTab === "friends" && (
+                        <section>
+                            {friends.length === 0 ? (
+                                <div className="friends-empty">
+                                    <FiUsers aria-hidden="true" />
+                                    <h2>No friends yet</h2>
+                                    <p>
+                                        Find someone and send
+                                        your first request.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="friend-list">
+                                    {friends.map((friend) => (
+                                        <article
+                                            className="friend-row friend-row-static"
+                                            key={friend.id}
+                                        >
+                                            <div className="friend-avatar">
+                                                {getInitial(
+                                                    friend.username
+                                                )}
+                                            </div>
+                                            <strong>
+                                                {friend.username}
+                                            </strong>
+                                            <span className="friend-status">
+                                                Friends
+                                            </span>
+                                        </article>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    )}
                 </div>
             )}
         </section>

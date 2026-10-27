@@ -1,0 +1,72 @@
+.workout-drawer-backdrop { position: fixed; inset: 0; z-index: 120; display: flex; justify-content: flex-end; background: rgba(0,0,0,.68); backdrop-filter: blur(8px); animation: workout-fade-in 180ms ease both; }
+.workout-drawer { width: min(540px,100%); height: 100%; overflow-y: auto; padding: 38px 34px 44px; color: #f7f7f8; background: #101115; border-left: 1px solid rgba(255,255,255,.09); box-shadow: -30px 0 80px rgba(0,0,0,.48); animation: workout-slide-in 360ms cubic-bezier(.22,1,.36,1) both; }
+.workout-drawer-header,.workout-body-trigger,.workout-number-grid,.workout-weight-shell { display: flex; align-items: center; }
+.workout-drawer-header { justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+.workout-drawer-kicker { color: var(--app-lime); font-size: .68rem; font-weight: 800; letter-spacing: .18em; }
+.workout-drawer h2 { margin: 7px 0 0; font-size: clamp(1.8rem,4vw,2.45rem); line-height: 1; }
+.workout-close-button { width: 44px; height: 44px; display: grid; place-items: center; flex: 0 0 auto; color: #f7f7f8; background: #1b1d23; border: 1px solid rgba(255,255,255,.1); border-radius: 50%; cursor: pointer; }
+.workout-close-button svg { width: 21px; height: 21px; }
+.workout-form { display: grid; gap: 22px; }
+.workout-field { display: grid; gap: 9px; color: #a4a6af; font-size: .76rem; font-weight: 700; letter-spacing: .05em; }
+.workout-field > input,.workout-input-shell,.workout-body-trigger,.workout-weight-shell { min-height: 56px; color: #f7f7f8; background: linear-gradient(135deg,#181a20,#14161b); border: 1px solid rgba(255,255,255,.1); border-radius: 16px; }
+.workout-field > input { width: 100%; padding: 0 16px; font: inherit; font-size: .95rem; letter-spacing: 0; outline: none; }
+.workout-field > input:focus,.workout-input-shell:focus-within,.workout-weight-shell:focus-within { border-color: #8170ff; box-shadow: 0 0 0 3px rgba(129,112,255,.14); }
+.workout-input-shell { width: 100%; gap: 12px; padding: 0 12px; }
+.workout-input-shell svg { color: #a89cff; }
+.workout-input-shell input { width: 100%; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; color-scheme: dark; }
+.workout-field-icon { width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; background: rgba(129,112,255,.12); border: 1px solid rgba(129,112,255,.2); border-radius: 11px; }
+.workout-field-icon svg { width: 17px; height: 17px; }
+.workout-date-field { position: relative; z-index: 4; }
+.workout-date-trigger { display: flex; align-items: center; color: #f7f7f8; font: inherit; font-size: .94rem; font-weight: 650; letter-spacing: 0; text-align: left; cursor: pointer; }
+.workout-date-trigger .is-placeholder { color: #737782; font-weight: 500; }
+.workout-field-chevron { margin-left: auto; transition: transform 180ms ease; }
+.workout-date-trigger[aria-expanded="true"] .workout-field-chevron { transform: rotate(180deg); }
+.workout-calendar { position: absolute; top: calc(100% + 10px); left: 0; right: 0; padding: 18px; overflow: hidden; background: #14161c; border: 1px solid rgba(255,255,255,.11); border-radius: 20px; box-shadow: 0 24px 65px rgba(0,0,0,.65); animation: workout-pop-in 180ms cubic-bezier(.22,1,.36,1) both; }
+.workout-calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.workout-calendar-header > div:first-child { display: grid; gap: 4px; }
+.workout-calendar-header small { color: #8170ff; font-size: .58rem; font-weight: 900; letter-spacing: .18em; }
+.workout-calendar-header strong { color: #f7f7f8; font-size: 1.05rem; letter-spacing: -.02em; }
+.workout-calendar-controls { display: flex; gap: 7px; }
+.workout-calendar-controls button { width: 34px; height: 34px; display: grid; place-items: center; color: #d9d9df; background: #1e2027; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; cursor: pointer; }
+.workout-calendar-controls button:hover { color: #fff; background: var(--app-purple); }
+.workout-calendar-weekdays,.workout-calendar-days { display: grid; grid-template-columns: repeat(7,1fr); }
+.workout-calendar-weekdays { margin-bottom: 7px; color: #656976; font-size: .6rem; font-weight: 800; text-align: center; }
+.workout-calendar-days { gap: 4px; }
+.workout-calendar-days button { aspect-ratio: 1; display: grid; place-items: center; color: #d9d9df; background: transparent; border: 0; border-radius: 11px; font: inherit; font-size: .77rem; font-weight: 650; cursor: pointer; }
+.workout-calendar-days button:hover { color: #fff; background: rgba(129,112,255,.18); }
+.workout-calendar-days button.is-outside { color: #444852; }
+.workout-calendar-days button.is-today { box-shadow: inset 0 0 0 1px rgba(184,255,61,.5); }
+.workout-calendar-days button.is-selected { color: #0b0f13; background: var(--app-lime); box-shadow: 0 7px 18px rgba(119,120,255,.18); }
+.workout-body-trigger { width: 100%; justify-content: space-between; padding: 0 14px; font: inherit; color: #f7f7f8; cursor: pointer; }
+.workout-body-trigger-copy { display: flex; align-items: center; gap: 12px; }
+.workout-body-trigger-copy img { width: 36px; height: 36px; padding: 3px; object-fit: contain; background: #f3f4f5; border-radius: 10px; }
+.workout-body-trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+.workout-body-trigger svg { transition: transform 180ms ease; }
+.workout-body-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; padding: 12px; background: #121419; border: 1px solid rgba(255,255,255,.08); border-radius: 20px; box-shadow: 0 20px 55px rgba(0,0,0,.28); animation: workout-pop-in 180ms cubic-bezier(.22,1,.36,1) both; }
+.workout-body-card { position: relative; min-width: 0; padding: 8px 8px 11px; overflow: hidden; color: #aeb0b8; background: #191b21; border: 1px solid transparent; border-radius: 15px; cursor: pointer; transition: transform 160ms ease,background 160ms ease,box-shadow 160ms ease; }
+.workout-body-card:hover { transform: translateY(-2px); color: #fff; background: #20232a; box-shadow: 0 12px 25px rgba(0,0,0,.22); }
+.workout-body-card.is-selected { color: #fff; background: rgba(129,112,255,.18); box-shadow: inset 0 0 0 1px rgba(129,112,255,.55); }
+.workout-body-image { position: relative; height: 126px; display: grid; place-items: center; margin-bottom: 8px; overflow: hidden; background: #fff; border-radius: 11px; }
+.workout-body-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.workout-body-card strong { font-size: .76rem; }
+.workout-body-check { position: absolute; top: 9px; right: 9px; width: 20px; height: 20px; padding: 4px; color: #fff; background: var(--app-purple); border-radius: 50%; }
+.workout-exercise-shell { display: flex; align-items: center; }
+.workout-exercise-shell input { font-size: .95rem; letter-spacing: 0; }
+.workout-exercise-shell input::placeholder { color: #6f737e; }
+.workout-number-grid { align-items: start; gap: 10px; }
+.workout-number-grid .workout-field { min-width: 0; flex: 1; }
+.workout-weight-shell { padding: 0 12px; }
+.workout-weight-shell input { width: 100%; min-width: 0; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; }
+.workout-number-grid input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
+.workout-number-grid input[type="number"]::-webkit-inner-spin-button,.workout-number-grid input[type="number"]::-webkit-outer-spin-button { margin: 0; appearance: none; }
+.workout-weight-shell small { color: #777b86; font-weight: 800; }
+.workout-form-error { margin: -4px 0 0; padding: 12px 14px; color: #ff9b9b; background: rgba(255,92,92,.1); border-radius: 12px; font-size: .86rem; }
+.workout-save-button { min-height: 54px; margin-top: 4px; color: #0b0f13; background: var(--app-lime); border: 0; border-radius: 15px; font: inherit; font-weight: 800; cursor: pointer; transition: transform 160ms ease,opacity 160ms ease; }
+.workout-save-button:hover:not(:disabled) { transform: translateY(-2px); }
+.workout-save-button:disabled { cursor: not-allowed; opacity: .42; }
+@keyframes workout-fade-in { from { opacity: 0; } }
+@keyframes workout-slide-in { from { opacity: 0; transform: translateX(56px); } }
+@keyframes workout-pop-in { from { opacity: 0; transform: translateY(-8px) scale(.985); } }
+@media (max-width:640px) { .workout-drawer-backdrop { align-items: flex-end; } .workout-drawer { width: 100%; height: min(90vh,820px); padding: 26px 18px max(34px,env(safe-area-inset-bottom)); border: 0; border-radius: 24px 24px 0 0; animation-name: workout-sheet-in; } .workout-body-grid { grid-template-columns: repeat(2,1fr); } .workout-body-image { height: 138px; } .workout-number-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@keyframes workout-sheet-in { from { opacity: 0; transform: translateY(48px); } }
+@media (prefers-reduced-motion:reduce) { .workout-drawer-backdrop,.workout-drawer { animation: none; } .workout-body-card,.workout-save-button { transition: none; } }
