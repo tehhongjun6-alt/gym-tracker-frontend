@@ -1,5 +1,5 @@
 const API_URL =
-    import.meta.env.VITE_API_URL || "http://localhost:3000";
+    import.meta.env.VITE_API_URL || "https://gym-backed-production.up.railway.app";
 
 export async function apiFetch(path, options = {}) {
     const {
