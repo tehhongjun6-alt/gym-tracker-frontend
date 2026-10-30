@@ -14,7 +14,7 @@ import wesetLogo from "../assets/weset-logo-social.svg";
 import trackPhoto from "../assets/weset-track.png";
 import learnPhoto from "../assets/weset-learn.png";
 import sharePhoto from "../assets/weset-share.png";
-import "./Login.css";
+import "../styles/pages/Login.css";
 import { supabaseAuth } from "../supabaseAuth";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);

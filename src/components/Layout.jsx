@@ -16,7 +16,7 @@ import {
 } from "react-router-dom";
 
 import wesetLogo from "../assets/weset-logo-social.svg";
-import "./AppShell.css";
+import "../styles/components/AppShell.css";
 
 const navigation = [
     { label: "Fit", to: "/feed", icon: FiHome },

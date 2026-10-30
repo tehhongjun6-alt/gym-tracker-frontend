@@ -7,7 +7,7 @@ import chestImage from "../assets/muscle-chest.png";
 import coreImage from "../assets/muscle-core.png";
 import legImage from "../assets/muscle-leg.png";
 import shoulderImage from "../assets/muscle-shoulder.png";
-import "./WorkoutDrawer.css";
+import "../styles/components/WorkoutDrawer.css";
 
 const BODY_PARTS = [
     { value: "chest", label: "Chest", image: chestImage },

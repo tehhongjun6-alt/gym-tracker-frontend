@@ -15,7 +15,7 @@ import chestImage from "../assets/muscle-chest.png";
 import coreImage from "../assets/muscle-core.png";
 import legImage from "../assets/muscle-leg.png";
 import shoulderImage from "../assets/muscle-shoulder.png";
-import "./Profile.css";
+import "../styles/pages/Profile.css";
 
 const BODY_PARTS = {
     chest: { label: "Chest", image: chestImage },

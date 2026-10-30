@@ -15,7 +15,7 @@ import legImage from "../assets/muscle-leg.png";
 import shoulderImage from "../assets/muscle-shoulder.png";
 import PageHeader from "../components/PageHeader";
 import WorkoutDrawer from "../components/WorkoutDrawer";
-import "./Workouts.css";
+import "../styles/pages/Workouts.css";
 
 const EMPTY_FORM = { workout_date: "", body_part: "", exercise_name: "", sets: "", reps: "", weight: "" };
 

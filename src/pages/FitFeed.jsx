@@ -11,7 +11,7 @@ import {
     formatRelativeTime,
     getFriendshipLabel,
 } from "./feedUtils";
-import "./Feed.css";
+import "../styles/pages/Feed.css";
 
 function getInitials(username = "") {
     return username
@@ -132,7 +132,7 @@ export default function FitFeed({ token }) {
     }
 
     return (
-        <section className="fit-page" aria-labelledby="fit-title">
+        <section className="fit-page" aria-label="WESET Fit feed">
             <header className="fit-mobile-header">
                 <div>
                     <p className="fit-kicker">WESET</p>

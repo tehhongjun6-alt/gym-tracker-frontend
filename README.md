@@ -6,9 +6,15 @@ WESET is a full-stack fitness and social platform where users can track workouts
 
 This repository contains the React frontend. The Express API is maintained in a separate backend repository.
 
+## Project Planning
+
+The complete product plan includes the business idea, target users, brand identity, feature scope, database schema, page wireframes, user flows, architecture proposal, authentication model, and technical trade-offs.
+
+- [Read the WESET Product Plan](docs/PROJECT_PLAN.md)
+
 ## Live Application
 
-- Frontend: [https://gym-tracker-frontend-vert.vercel.app](https://gym-tracker-frontend-vert.vercel.app)
+- Frontend: [https://weset.vercel.app](https://weset.vercel.app)
 - Backend API: [https://gym-backed-production.up.railway.app](https://gym-backed-production.up.railway.app)
 - Backend repository: [https://github.com/tehhongjun6-alt/gym-backed](https://github.com/tehhongjun6-alt/gym-backed)
 
@@ -66,7 +72,7 @@ src/
 |   `-- pages/         Page-specific styles
 |-- tests/
 |   |-- components/    Component tests
-|   `-- pages/         Page and style tests
+|   `-- pages/         Page and user-flow tests
 |-- api.js             Shared backend API request helper
 |-- supabaseAuth.js    Supabase authentication client
 |-- supabaseStorage.js Supabase Storage client
@@ -122,6 +128,17 @@ npm test          # Run Vitest in watch mode
 npm test -- --run # Run the tests once
 ```
 
+## Frontend Tests
+
+The committed Vitest and React Testing Library tests cover the main frontend behavior:
+
+- Login, Google sign-in availability, signup, and protected navigation
+- Feed loading, empty, error, post, friend-request, and Create Post modal states
+- Workout loading, creation, editing, deletion confirmation, and API errors
+- Shared layout, page header, Create Post modal, and feed utility behavior
+
+CSS implementation-detail tests are intentionally excluded. The tests focus on behavior a user can see or trigger.
+
 ## How Authentication Works
 
 1. The user signs up or logs in with email and password, or starts Google OAuth.
@@ -152,9 +169,7 @@ The included `vercel.json` rewrites application routes to `index.html`, allowing
 ## Current Verification Status
 
 - Production build: passing
-- Automated tests: 29 passing, 7 outdated UI assertions currently failing
-
-The remaining test failures check interface text and controls that changed during the final redesign. They should be updated before reporting that the full automated test suite passes.
+- Frontend automated tests: 32 passing across 8 test files
 
 ## Product Identity
 

@@ -1,5 +1,5 @@
 import wesetLogo from "../assets/weset-logo-social.svg";
-import "./PageHeader.css";
+import "../styles/components/PageHeader.css";
 
 export default function PageHeader({ eyebrow, title, accent, titleId, action, showBrand = true }) {
     return (

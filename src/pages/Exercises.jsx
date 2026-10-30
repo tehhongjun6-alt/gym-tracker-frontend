@@ -10,7 +10,7 @@ import {
 
 import { apiFetch } from "../api";
 import PageHeader from "../components/PageHeader";
-import "./Exercises.css";
+import "../styles/pages/Exercises.css";
 
 const muscleOptions = [
     "abdominals", "biceps", "calves", "chest",

@@ -3,7 +3,7 @@ import { FiSearch, FiUsers } from "react-icons/fi";
 
 import { apiFetch } from "../api";
 import PageHeader from "../components/PageHeader";
-import "./Friends.css";
+import "../styles/pages/Friends.css";
 
 function getInitial(username = "") {
     return username.trim().charAt(0).toUpperCase() || "?";

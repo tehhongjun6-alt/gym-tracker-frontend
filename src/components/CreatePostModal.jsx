@@ -11,7 +11,7 @@ import {
 
 import { apiFetch } from "../api";
 import { createStorageClient } from "../supabaseStorage";
-import "./CreatePostModal.css";
+import "../styles/components/CreatePostModal.css";
 
 const allowedTypes = [
     "image/jpeg",

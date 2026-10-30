@@ -6,7 +6,7 @@ import {
 
 import { apiFetch } from "../api";
 import PageHeader from "../components/PageHeader";
-import "./Food.css";
+import "../styles/pages/Food.css";
 
 const FOOD_TOOLS = {
     meals: {

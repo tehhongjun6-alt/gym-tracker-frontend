@@ -11,7 +11,7 @@ import { useGSAP } from "@gsap/react";
 
 import { apiFetch } from "../api";
 import wesetLogo from "../assets/weset-logo-social.svg";
-import "./Login.css";
+import "../styles/pages/Login.css";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 

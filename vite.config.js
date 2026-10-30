@@ -5,6 +5,6 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   test: {
-    setupFiles: ['./src/test/setup.js'],
+    setupFiles: ['./src/tests/setup.js'],
   },
 })
