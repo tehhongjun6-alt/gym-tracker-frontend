@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { apiFetch } from "../../api";
 import Workouts from "../../pages/Workouts";
@@ -42,7 +42,13 @@ function mockLoad(items = []) {
 
 describe("Log Workout", () => {
     beforeEach(() => {
+        vi.useFakeTimers({ toFake: ["Date"] });
+        vi.setSystemTime(new Date("2026-10-25T12:00:00Z"));
         apiFetch.mockReset();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
     });
 
     it("opens a separate drawer with six body-part cards", async () => {

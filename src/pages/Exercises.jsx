@@ -145,24 +145,27 @@ export default function Exercises({ token }) {
         setExerciseError("");
         setImageError("");
 
-        try {
-            const exerciseData = await apiFetch(
+        const [exerciseResult, imageResult] = await Promise.allSettled([
+            apiFetch(
                 "/exercise-suggestions?" + query,
                 { token }
-            );
-            setExercises(exerciseData);
-        } catch (error) {
-            setExerciseError(error.message);
-        }
-
-        try {
-            const imageData = await apiFetch(
+            ),
+            apiFetch(
                 "/exercise-images?" + query,
                 { token }
-            );
-            setExerciseImages(imageData);
-        } catch (error) {
-            setImageError(error.message);
+            ),
+        ]);
+
+        if (exerciseResult.status === "fulfilled") {
+            setExercises(exerciseResult.value);
+        } else {
+            setExerciseError(exerciseResult.reason?.message || "Failed to load exercise suggestions");
+        }
+
+        if (imageResult.status === "fulfilled") {
+            setExerciseImages(imageResult.value);
+        } else {
+            setImageError(imageResult.reason?.message || "Failed to load exercise images");
         }
 
         setLoading(false);
